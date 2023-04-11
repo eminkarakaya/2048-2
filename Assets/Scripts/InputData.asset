@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42dcea8dd75f9874a97dd686bb111451, type: 3}
   m_Name: InputData
   m_EditorClassIdentifier: 
-  _touchPos: {x: 1074.125, y: 1181}
+  _touchPos: {x: 820.99994, y: 1599.75}
   _isClick: 0
   _isEnd: 0
   _isMove: 0

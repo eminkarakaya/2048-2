@@ -11,8 +11,7 @@ public class GridManager : Singleton<GridManager>
     [SerializeField] private Grid _gridPrefab;
     public List<Grid> left,right,up,down;
     public List<Grid> allGrids;
-    private void Awake() {
-    }
+    
     void Start()
     {
         foreach (var item in allGrids)
@@ -90,5 +89,20 @@ public class GridManager : Singleton<GridManager>
         {
             allGrids.Remove(_parent.GetChild(i).GetComponent<Grid>());
         }
+    }
+    public static Grid GetDirGrid(Grid grid, Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.UP:
+                return grid.top;
+            case Direction.DOWN:
+                return grid.bot;
+            case Direction.RIGHT:
+                return grid.right;
+            case Direction.LEFT:
+                return grid.left;
+        }
+        return null;
     }
 }

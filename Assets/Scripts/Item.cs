@@ -38,154 +38,70 @@ public class Item : MonoBehaviour
         switch (dir)
         {
             case Direction.UP:
-                while(temp.top != null )
+                while(temp.top != null && !temp.top.isFull)
                 {
-                    if(temp.top.isFull)
-                    {
-                        if(temp.top.item.value == value)
-                        {
-                            Debug.Log(temp.top + " " + temp.top.item ,temp.top);
-                            temp = temp.top;
-                            Item temp2 = temp.item;
-                            ItemManager.Instance.isMove = true;
-                            Item newItem = ItemManager.MergeItem(this,temp);
-                            targetItem = temp2;
-                            
-                            StartCoroutine (Move(transform,temp,ItemManager.Instance.duration,()=>ItemManager.MergeAnimation(this,temp,newItem)));
-                            return;
-                        }
-                        else
-                        {
-                            ItemManager.Instance.isMove = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        temp = temp.top;
-                        ItemManager.Instance.isMove = true;
-                    }
+                    temp = temp.top;
+                    
+                    ItemManager.Instance.isMove = true;
                 }
-                
-                StartCoroutine (Move(transform,temp,ItemManager.Instance.duration));
-                
+                    StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
+
             break;
             case Direction.DOWN:
-                while(temp.bot != null)
+                while(temp.bot != null && !temp.bot.isFull)
                 {
-                    if(temp.bot.isFull)
-                    {
-                        if(temp.bot.item.value == value)
-                        {
-                            Debug.Log(temp.bot + " " + temp.bot.item,temp.bot);
-                            
-                            temp = temp.bot;
-                            Item temp2 = temp.item;
-                            targetItem = temp2;
-                            ItemManager.Instance.isMove = true;
-                            Item newItem = ItemManager.MergeItem(this,temp);
-                            StartCoroutine (Move(transform,temp,ItemManager.Instance.duration,()=>ItemManager.MergeAnimation(this,temp,newItem)));
-                            return;
-                        }
-                        else
-                        {
-                            ItemManager.Instance.isMove = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        ItemManager.Instance.isMove = true;
-                        temp = temp.bot;
-                    }
+                    ItemManager.Instance.isMove = true;
+                    temp = temp.bot;
+                    
                 }
+                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.DOWN));
                 
-                StartCoroutine (Move(transform,temp,ItemManager.Instance.duration));
             break;
             case Direction.RIGHT:
-                while(temp.right != null)
+                while(temp.right != null && !temp.right.isFull)
                 {
-                    if(temp.right.isFull)
-                    {
-                        if(temp.right.item.value == value)
-                        {
-                            Debug.Log(temp.right + " " + temp.right.item,temp.right);
-                            temp = temp.right;
-                            Item temp2 = temp.item;
-                            targetItem = temp2;
-                            ItemManager.Instance.isMove = true;
-                            Item newItem = ItemManager.MergeItem(this,temp);
-                            StartCoroutine (Move(transform,temp,ItemManager.Instance.duration,()=>ItemManager.MergeAnimation(this,temp,newItem)));
-                            return;
-                        }
-                        else
-                        {
-                            ItemManager.Instance.isMove = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        temp = temp.right;
-                        ItemManager.Instance.isMove = true;
-                    }
+                    temp = temp.right;
+                    
+                    ItemManager.Instance.isMove = true;
                 }
-                
-                StartCoroutine (Move(transform,temp,ItemManager.Instance.duration));
+                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
             break;
             case Direction.LEFT:
-                while(temp.left != null)
+                while(temp.left != null && !temp.left.isFull)
                 {
-                    if(temp.left.isFull)
-                    {
-                        if(temp.left.item.value == value)
-                        {
-                            Debug.Log(temp.left + " " + temp.left.item,temp.left);
-                            temp = temp.left;
-                            Item temp2 = temp.item;
-                            targetItem = temp2;
-                            ItemManager.Instance.isMove = true;
-                            Item newItem = ItemManager.MergeItem(this,temp);
-                            // 2 obje de sılınıcek ve anımasyon sonunda yok olcak
-
-                            StartCoroutine (Move(transform,temp,ItemManager.Instance.duration,()=>ItemManager.MergeAnimation(this,temp,newItem)));
-                            return;
-                        }
-                        else
-                        {
-                            ItemManager.Instance.isMove = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        temp = temp.left;
-                        ItemManager.Instance.isMove = true;
-                    }
+                    temp = temp.left;
+                    
+                    ItemManager.Instance.isMove = true;   
                 }
-                StartCoroutine (Move(transform,temp,ItemManager.Instance.duration));
+                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
             break;
         }
     }
-    private IEnumerator Move(Transform current,Grid target,float duration , System.Action action = null)
+    private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
         float passed = 0f;
         Vector3 initPosition = current.position; 
 
-        grid.item = null;
-        grid.isFull = false;
-        grid = target;
-        grid.isFull = true;
-        target.item = this;
-
-        while(passed < duration)
+        
+        while(GridManager.GetDirGrid(grid,dir) != null && !GridManager.GetDirGrid(grid,dir).isFull)
         {
-            passed += Time.deltaTime;
-            var normalized = passed / duration;
-            var position = Vector3.Lerp(initPosition,target.position,normalized);
-            current.position = position;
-            yield return null; 
+            
+            grid.item = null;
+            grid.isFull = false;
+            grid = GridManager.GetDirGrid(grid,dir);
+            grid.isFull = true;
+            grid.item = this;
+            while(passed < duration)
+            {
+                passed += Time.deltaTime;
+                var normalized = passed / duration;
+                var position = Vector3.Lerp(initPosition,grid.position,normalized);
+                current.position = position;
+                yield return null;
+            }
+            passed = 0f;
+            initPosition = current.position;
+            action?.Invoke();
         }
-        action?.Invoke();
     }   
 }

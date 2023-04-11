@@ -60,7 +60,6 @@ public class ItemManager : Singleton<ItemManager>
                 if(GridManager.Instance.left[i].item != null)
                 {
                     GridManager.Instance.left[i].item.FindTarget(Direction.LEFT);
-                    
                 }
             }
             if(isMove)
@@ -94,7 +93,7 @@ public class ItemManager : Singleton<ItemManager>
     IEnumerator WaitAnimation()
     {
         inAnimation = true;
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(duration*4);
         inAnimation = false;
         CreateItem(GetRandomGrid(),0,2);
     }
@@ -116,29 +115,16 @@ public class ItemManager : Singleton<ItemManager>
         int random =  Random.Range (0,grids.Count);
         return grids[random];
     }
-    public static void MergeAnimation(Item item1, Grid grid2,Item createdItem)
-    {
-        DestroyAnimation(item1);
-        DestroyAnimation(grid2.item);
-        createdItem.gameObject.SetActive(true);
-    }
+    
     public static Item MergeItem(Item item1,Grid grid2)
     {
         int value = item1.value;
-        
         DestroyItem(item1);
         DestroyItem(grid2.item);
-        Debug.Log("merge");
-        Item newItem = CreateItem(item1.grid,0,value*INCREMENT_VALUE);
-        
-        newItem.GetComponent<SpriteRenderer>().color = Color.yellow;
-        Debug.Break();
+        Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
         return newItem;
     }
-    public static void DestroyAnimation(Item item)
-    {
-        item.gameObject.SetActive(false);
-    }
+   
     public static Item DestroyItem(Item item)
     {
         Item item1 = item;
@@ -149,10 +135,7 @@ public class ItemManager : Singleton<ItemManager>
         item.value = INITIAL_VALUE;
         return item;
     }
-    public static void CreateAnimation(Item item)
-    {
-        item.gameObject.SetActive(true);
-    }
+    
     public static Item CreateItem(Grid grid,int objType,int value)
     {
         Item item = ObjectPool.Instance.GetPooledObject(objType);

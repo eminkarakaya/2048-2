@@ -34,7 +34,7 @@ public class ObjectPool : Singleton<ObjectPool>
             return null;
         Item obj = pools[objectType].pooledObjects.Dequeue();
         obj.itemType = objectType;
-        // obj.gameObject.SetActive(true);
+        obj.gameObject.SetActive(true);
 
         // pools[objectType].pooledObjects.Enqueue(obj);
         return obj;
@@ -42,6 +42,6 @@ public class ObjectPool : Singleton<ObjectPool>
     public void SetPooledObject(int objectType,Item item)
     {
         pools[objectType].pooledObjects.Enqueue(item);
-        
+        item.gameObject.SetActive(false);
     }
 }

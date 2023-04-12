@@ -7,17 +7,17 @@ public class ItemManager : Singleton<ItemManager>
     [SerializeField] private InputData _inputData;
     [SerializeField] private static List<Item> _allItems = new List<Item>();
     [SerializeField] private List<Color> colors;
-    private const int INITIAL_VALUE = 2;
+    public const int INITIAL_VALUE = 2;
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
     public float duration;
     public bool isMove;
+    Level level;
+    LevelData lastLevelData;
     private void Start() {
-        CreateItem(GetRandomGrid(),0,INITIAL_VALUE); 
-        CreateItem(GetRandomGrid(),0,INITIAL_VALUE); 
-        
+        level = FindObjectOfType<Level>();
+        lastLevelData = new LevelData(level);
     }
-   
     
     private void Update() {
          if(_inputData.SwipeDown)
@@ -44,7 +44,6 @@ public class ItemManager : Singleton<ItemManager>
                 if(GridManager.Instance.up[i].item != null)
                 {
                     GridManager.Instance.up[i].item.FindTarget(Direction.UP);
-                    
                 }
             }
             if(isMove)
@@ -88,13 +87,20 @@ public class ItemManager : Singleton<ItemManager>
     }
     public Color GetColor(int value)
     {
-        return colors[(int)Mathf.Sqrt(value)-1];
+        int sum = 0;
+        while(value != 2)
+        {
+            value = value/INITIAL_VALUE;
+            sum ++;
+        }
+        return colors[sum];
     }
     IEnumerator WaitAnimation()
     {
         inAnimation = true;
         yield return new WaitForSeconds(duration*4);
         inAnimation = false;
+
         CreateItem(GetRandomGrid(),0,2);
     }
     public Grid GetRandomGrid()
@@ -122,6 +128,7 @@ public class ItemManager : Singleton<ItemManager>
         DestroyItem(item1);
         DestroyItem(grid2.item);
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
+        newItem.newItem = true;
         return newItem;
     }
    

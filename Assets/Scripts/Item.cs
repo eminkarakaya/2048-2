@@ -7,6 +7,7 @@ public class Item : MonoBehaviour
     [SerializeField] private Grid temp;
     [SerializeField] private Item targetItem;
     [SerializeField] private TextMeshPro _valueText;
+    public bool newItem;
     public int itemType;
     [SerializeField] private int _value;
     private SpriteRenderer _renderer;
@@ -42,7 +43,6 @@ public class Item : MonoBehaviour
                 {
                     temp = temp.top;
                     
-                    ItemManager.Instance.isMove = true;
                 }
                     StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
 
@@ -50,7 +50,6 @@ public class Item : MonoBehaviour
             case Direction.DOWN:
                 while(temp.bot != null && !temp.bot.isFull)
                 {
-                    ItemManager.Instance.isMove = true;
                     temp = temp.bot;
                     
                 }
@@ -62,7 +61,6 @@ public class Item : MonoBehaviour
                 {
                     temp = temp.right;
                     
-                    ItemManager.Instance.isMove = true;
                 }
                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
             break;
@@ -70,8 +68,7 @@ public class Item : MonoBehaviour
                 while(temp.left != null && !temp.left.isFull)
                 {
                     temp = temp.left;
-                    
-                    ItemManager.Instance.isMove = true;   
+                       
                 }
                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
             break;
@@ -79,29 +76,60 @@ public class Item : MonoBehaviour
     }
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
+        ItemManager.Instance.isMove = true;
         float passed = 0f;
         Vector3 initPosition = current.position; 
-
+        newItem = false;
         
-        while(GridManager.GetDirGrid(grid,dir) != null && !GridManager.GetDirGrid(grid,dir).isFull)
+        while(GridManager.GetDirGrid(grid,dir) != null)
         {
-            
-            grid.item = null;
-            grid.isFull = false;
-            grid = GridManager.GetDirGrid(grid,dir);
-            grid.isFull = true;
-            grid.item = this;
-            while(passed < duration)
+            if(GridManager.GetDirGrid(grid,dir).isFull)
             {
-                passed += Time.deltaTime;
-                var normalized = passed / duration;
-                var position = Vector3.Lerp(initPosition,grid.position,normalized);
-                current.position = position;
-                yield return null;
+                if(GridManager.GetDirGrid(grid,dir).item.newItem)
+                {
+                    break;
+                }
+                if(GridManager.GetDirGrid(grid,dir).item.value == value)
+                {
+                    
+                    // merge
+                    // this.grid.isFull = false;
+                    // while(passed < duration)
+                    // {
+                    //     passed += Time.deltaTime;
+                    //     var normalized = passed / duration;
+                    //     var position = Vector3.Lerp(initPosition,GridManager.GetDirGrid(grid,dir).position,normalized);
+                    //     current.position = position;
+                    //     yield return null;
+                    // }
+                    ItemManager.MergeItem(this,GridManager.GetDirGrid(grid,dir));
+                }
+                else
+                {
+                    break;
+                }
             }
-            passed = 0f;
-            initPosition = current.position;
-            action?.Invoke();
+            else
+            {
+                grid.item = null;
+                grid.isFull = false;
+                grid = GridManager.GetDirGrid(grid,dir);
+                grid.isFull = true;
+                grid.item = this;
+            
+                while(passed < duration)
+                {
+                    passed += Time.deltaTime;
+                    var normalized = passed / duration;
+                    var position = Vector3.Lerp(initPosition,grid.position,normalized);
+                    current.position = position;
+                    yield return null;
+                }
+                // check merge
+                passed = 0f;
+                initPosition = current.position;
+                action?.Invoke();
+            }
         }
     }   
 }

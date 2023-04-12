@@ -1,28 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GridManager : Singleton<GridManager>
 {
     [SerializeField] private Vector2 _startPos;
-    [SerializeField] private Vector2Int _scale;
+    public Vector2Int scale;
     [SerializeField] private Transform _parent;
     public AnimationCurve animationCurve;
     [SerializeField] private Grid _gridPrefab;
     public List<Grid> left,right,up,down;
-    public List<Grid> allGrids;
+    public List<Grid> allGrids = new List<Grid>();
     
-    void Start()
-    {
+    private void Awake() {
+        CreateGrids();
+        FindSortedGrids();
         foreach (var item in allGrids)
         {
             item.SetNeighbor();
         }
+        
+    }
+    void Start()
+    {
     }
     [ContextMenu("FindSortedGrids")]
     private void FindSortedGrids()
     {
-        for (int i = 0; i < _scale.x; i++)
+        for (int i = 0; i < scale.x; i++)
         {
             for (int j = 0; j < allGrids.Count; j++)
             {
@@ -32,7 +38,7 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
-        for (int i = _scale.x-1; i >= 0; i--)
+        for (int i = scale.x-1; i >= 0; i--)
         {
             for (int j = 0; j < allGrids.Count; j++)
             {
@@ -42,7 +48,7 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
-        for (int i = 0; i < _scale.y; i++)
+        for (int i = 0; i < scale.y; i++)
         {
             for (int j = 0; j < allGrids.Count; j++)
             {
@@ -52,7 +58,7 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
-        for (int i = _scale.y-1; i >= 0; i--)
+        for (int i = scale.y-1; i >= 0; i--)
         {
             for (int j = 0; j < allGrids.Count; j++)
             {
@@ -73,23 +79,15 @@ public class GridManager : Singleton<GridManager>
     [ContextMenu("CreateGrids")]
     private void CreateGrids()
     {
-        for (int y = 0; y < _scale.y; y++)
+        for (int y = 0; y < scale.y; y++)
         {            
-            for (int x = 0; x < _scale.x; x++)
+            for (int x = 0; x < scale.x; x++)
             {
                 CreateGrid(new Vector2Int(x,y),new Vector2(_startPos.x + x *.9f,_startPos.y - y*.9f));
             }
         }
     }
-    [ContextMenu("ClearGrids")]
-    private void Clear()
-    {
-        int count = allGrids.Count;
-        for (int i = 0; i < _parent.childCount; i++)
-        {
-            allGrids.Remove(_parent.GetChild(i).GetComponent<Grid>());
-        }
-    }
+
     public static Grid GetDirGrid(Grid grid, Direction dir)
     {
         switch (dir)

@@ -42,7 +42,6 @@ public class Item : MonoBehaviour
                 while(temp.top != null && !temp.top.isFull)
                 {
                     temp = temp.top;
-                    
                 }
                     StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
 
@@ -51,7 +50,6 @@ public class Item : MonoBehaviour
                 while(temp.bot != null && !temp.bot.isFull)
                 {
                     temp = temp.bot;
-                    
                 }
                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.DOWN));
                 
@@ -60,15 +58,14 @@ public class Item : MonoBehaviour
                 while(temp.right != null && !temp.right.isFull)
                 {
                     temp = temp.right;
-                    
                 }
                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
             break;
             case Direction.LEFT:
+                
                 while(temp.left != null && !temp.left.isFull)
                 {
-                    temp = temp.left;
-                       
+                    temp = temp.left; 
                 }
                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
             break;
@@ -76,7 +73,7 @@ public class Item : MonoBehaviour
     }
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
-        ItemManager.Instance.isMove = true;
+        
         float passed = 0f;
         Vector3 initPosition = current.position; 
         newItem = false;
@@ -102,6 +99,7 @@ public class Item : MonoBehaviour
                     //     current.position = position;
                     //     yield return null;
                     // }
+                    
                     ItemManager.MergeItem(this,GridManager.GetDirGrid(grid,dir));
                 }
                 else
@@ -111,6 +109,7 @@ public class Item : MonoBehaviour
             }
             else
             {
+                ItemManager.Instance.hareketEdenItemler ++;
                 grid.item = null;
                 grid.isFull = false;
                 grid = GridManager.GetDirGrid(grid,dir);

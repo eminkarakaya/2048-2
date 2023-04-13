@@ -9,12 +9,14 @@ public class LevelData
 {
     public List< int>  items = new List<int>();
     public int highScore;
+    public bool backClaim = false;
     public LevelData()
     {
         
     }
     public LevelData(Level level)
     {
+        backClaim = level.backClaim;
         items = level.items;
     }
 

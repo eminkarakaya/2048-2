@@ -5,10 +5,11 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 public class SaveSystem : Singleton<SaveSystem>
 {
-    
+    [SerializeField] private bool resetData;
     public GameData gameData;
     private void OnDisable() {
         SaveGame();
+        ResetData();
     }
     public void SaveGame()
     {
@@ -39,12 +40,30 @@ public class SaveSystem : Singleton<SaveSystem>
                     data.items.Add(0);
                 }
             }
+            for (int i = 0; i < 4; i++)
+            {
+                LevelData data = new LevelData();
+                gameData.lastMoveDatas.Add(data);
+                for (int j = 0; j < 64; j++)
+                {
+                    data.items.Add(0);
+                }
+            }
             SaveGame();
         }
+    }
+    private void Update() {
+        if(Input.GetKeyDown(KeyCode.A))
+            Debug.Log(PlayerPrefs.GetString("Data"));
+        
     }
     public GameData LoadGame()
     {
         gameData = JsonUtility.FromJson<GameData>(PlayerPrefs.GetString("Data"));
         return gameData;
+    }
+    public void ResetData()
+    {
+        if(resetData) PlayerPrefs.SetString("Data",null);
     }
 }

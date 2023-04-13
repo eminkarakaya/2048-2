@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 public class ItemManager : Singleton<ItemManager>
 {
+    public delegate void OnMovementFinished();
+    public static OnMovementFinished onMovementFinished;
     [SerializeField] private InputData _inputData;
-    [SerializeField] private static List<Item> _allItems = new List<Item>();
     [SerializeField] private List<Color> colors;
     public const int INITIAL_VALUE = 2;
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
     public float duration;
-    public bool isMove;
+    // public bool isMove;
+    public int hareketEdenItemler;
     Level level;
     LevelData lastLevelData;
     private void Start() {
@@ -20,25 +23,35 @@ public class ItemManager : Singleton<ItemManager>
     }
     
     private void Update() {
-         if(_inputData.SwipeDown)
+        if(inAnimation) return;
+        if(_inputData.SwipeDown)
         {
+            
+            for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
+            {
+                level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
+            }
             for (int i = 0; i < GridManager.Instance.down.Count; i++)
             {
                 if(GridManager.Instance.down[i].item != null)
                 {
                     GridManager.Instance.down[i].item.FindTarget(Direction.DOWN);
-                    
                 }
             }
-            if(isMove)
+           
+            if(hareketEdenItemler > 0)
             {
                 StartCoroutine(WaitAnimation());
-                isMove = false;
+                hareketEdenItemler = 0;
             }
             
         }
         else if(_inputData.SwipeUp)
         {
+            for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
+            {
+                level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
+            }
             for (int i = 0; i < GridManager.Instance.up.Count; i++)
             {
                 if(GridManager.Instance.up[i].item != null)
@@ -46,14 +59,19 @@ public class ItemManager : Singleton<ItemManager>
                     GridManager.Instance.up[i].item.FindTarget(Direction.UP);
                 }
             }
-            if(isMove)
+            
+            if(hareketEdenItemler>0)
             {
                 StartCoroutine(WaitAnimation());
-                isMove = false;
+                hareketEdenItemler = 0;
             }
         }
         else if(_inputData.SwipeLeft)
         {
+            for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
+            {
+                level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
+            }
             for (int i = 0; i < GridManager.Instance.left.Count; i++)
             {
                 if(GridManager.Instance.left[i].item != null)
@@ -61,29 +79,33 @@ public class ItemManager : Singleton<ItemManager>
                     GridManager.Instance.left[i].item.FindTarget(Direction.LEFT);
                 }
             }
-            if(isMove)
+           
+            if(hareketEdenItemler>0)
             {
                 StartCoroutine(WaitAnimation());
-                isMove = false;
+                hareketEdenItemler = 0;
             }
         }
         else if(_inputData.SwipeRight)
         {
+            for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
+            {
+                level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
+            }
             for (int i = 0; i < GridManager.Instance.right.Count; i++)
             {
                 if(GridManager.Instance.right[i].item != null)
                 {
                     GridManager.Instance.right[i].item.FindTarget(Direction.RIGHT);
-                    
                 }
             }
-            if(isMove)
+           
+            if(hareketEdenItemler>0)
             {
                 StartCoroutine(WaitAnimation());
-                isMove = false;
+                hareketEdenItemler = 0;
             }
         }
-        
     }
     public Color GetColor(int value)
     {
@@ -98,10 +120,17 @@ public class ItemManager : Singleton<ItemManager>
     IEnumerator WaitAnimation()
     {
         inAnimation = true;
-        yield return new WaitForSeconds(duration*4);
+        Debug.Log("wait");
+        yield return new WaitForSeconds(duration*6);
         inAnimation = false;
 
+        
         CreateItem(GetRandomGrid(),0,2);
+        onMovementFinished?.Invoke();
+        hareketEdenItemler = 0;
+        level.SaveLevel(level);
+        
+        // level.lastMoveData.items = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items;
     }
     public Grid GetRandomGrid()
     {
@@ -129,13 +158,13 @@ public class ItemManager : Singleton<ItemManager>
         DestroyItem(grid2.item);
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
         newItem.newItem = true;
+        ItemManager.Instance.hareketEdenItemler ++;
         return newItem;
     }
    
     public static Item DestroyItem(Item item)
     {
         Item item1 = item;
-        _allItems.Remove(item);
         item.grid.item = null;
         item.grid.isFull = false;
         ObjectPool.Instance.SetPooledObject(item.itemType,item);
@@ -152,7 +181,6 @@ public class ItemManager : Singleton<ItemManager>
         grid.isFull = true;
         
         item.value = value;
-        _allItems.Add(item);
         item.transform.position = grid.transform.position;
         return item;
     }

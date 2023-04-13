@@ -313,7 +313,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 166314484}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1691757805}
+        m_TargetAssemblyTypeName: Level, Assembly-CSharp
+        m_MethodName: BackBtn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &166314484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1173,7 +1185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startPos: {x: 0, y: 0}
-  _scale: {x: 5, y: 5}
+  scale: {x: 0, y: 0}
   _parent: {fileID: 194307393}
   animationCurve:
     serializedVersion: 2
@@ -4029,6 +4041,10 @@ MonoBehaviour:
   restartMenu: {fileID: 1082699422}
   scoreText: {fileID: 0}
   highScoreText: {fileID: 0}
+  items: 
+  lastMoveData:
+    items: 
+    highScore: 0
 --- !u!4 &1691757806
 Transform:
   m_ObjectHideFlags: 0

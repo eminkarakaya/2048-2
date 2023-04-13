@@ -22,6 +22,8 @@ public class Item : MonoBehaviour
     }
     
     public Grid grid;
+
+
     private void Awake() {
         _renderer = GetComponent<SpriteRenderer>();
         temp = this.grid;
@@ -72,7 +74,7 @@ public class Item : MonoBehaviour
         }
     }
 
-    
+
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
         float passed = 0f;
@@ -89,18 +91,6 @@ public class Item : MonoBehaviour
                 }
                 if(GridManager.GetDirGrid(grid,dir).item.value == value)
                 {
-                    
-                    // merge
-                    // this.grid.isFull = false;
-                    // while(passed < duration)
-                    // {
-                    //     passed += Time.deltaTime;
-                    //     var normalized = passed / duration;
-                    //     var position = Vector3.Lerp(initPosition,GridManager.GetDirGrid(grid,dir).position,normalized);
-                    //     current.position = position;
-                    //     yield return null;
-                    // }
-                    
                     ItemManager.Instance.MergeItem(this,GridManager.GetDirGrid(grid,dir));
                 }
                 else
@@ -110,7 +100,7 @@ public class Item : MonoBehaviour
             }
             else
             {
-                ItemManager.Instance.hareketEdenItemler ++;
+                ItemManager.Instance.movingItems ++;
                 grid.item = null;
                 grid.isFull = false;
                 grid = GridManager.GetDirGrid(grid,dir);
@@ -121,7 +111,7 @@ public class Item : MonoBehaviour
                 {
                     passed += Time.deltaTime;
                     var normalized = passed / duration;
-                    var position = Vector3.Lerp(initPosition,grid.position,normalized);
+                    var position = Vector3.Lerp(initPosition,grid.transform.position,normalized);
                     current.position = position;
                     yield return null;
                 }

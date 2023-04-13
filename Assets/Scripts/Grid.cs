@@ -22,14 +22,10 @@ public class Grid : MonoBehaviour
         }
     }
     public Vector2Int index;
-    public Vector2 position;
-    public bool roadBlocked;
-    public bool isDisabledGrid;
     public bool isFull;
     public Grid top,bot,right,left;
     void Start()
     {
-        position = this.transform.position;
         SetNeighbor();
     }
 

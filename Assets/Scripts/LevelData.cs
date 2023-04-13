@@ -9,6 +9,8 @@ public class LevelData
 {
     public List< int>  items = new List<int>();
     public int highScore;
+    public int prevScore;
+    public int score;
     public bool backClaim = false;
     public LevelData()
     {
@@ -18,6 +20,9 @@ public class LevelData
     {
         backClaim = level.backClaim;
         items = level.items;
+        score = level.score;
+        prevScore = level.prevScore;
+        highScore = level.highScore;
     }
 
 }

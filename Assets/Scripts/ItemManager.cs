@@ -13,9 +13,8 @@ public class ItemManager : Singleton<ItemManager>
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
     public float duration;
-    public int hareketEdenItemler;
+    public int movingItems;
     Level level;
-    // public int createdItemValue = 2;
     LevelData lastLevelData;
     private void Start() {
         level = FindObjectOfType<Level>();
@@ -27,7 +26,7 @@ public class ItemManager : Singleton<ItemManager>
         if(inAnimation) return;
         if(_inputData.SwipeDown || Input.GetKeyDown(KeyCode.S))
         {
-            
+            level.prevScore = level.score;
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
                 level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
@@ -40,15 +39,16 @@ public class ItemManager : Singleton<ItemManager>
                 }
             }
            
-            if(hareketEdenItemler > 0)
+            if(movingItems > 0)
             {
                 StartCoroutine(WaitAnimation());
-                hareketEdenItemler = 0;
+                movingItems = 0;
             }
             
         }
         else if(_inputData.SwipeUp || Input.GetKeyDown(KeyCode.W))
         {
+            level.prevScore = level.score;
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
                 level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
@@ -61,14 +61,15 @@ public class ItemManager : Singleton<ItemManager>
                 }
             }
             
-            if(hareketEdenItemler>0)
+            if(movingItems>0)
             {
                 StartCoroutine(WaitAnimation());
-                hareketEdenItemler = 0;
+                movingItems = 0;
             }
         }
         else if(_inputData.SwipeLeft || Input.GetKeyDown(KeyCode.A))
         {
+            level.prevScore = level.score;
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
                 level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
@@ -81,10 +82,10 @@ public class ItemManager : Singleton<ItemManager>
                 }
             }
            
-            if(hareketEdenItemler>0)
+            if(movingItems>0)
             {
                 StartCoroutine(WaitAnimation());
-                hareketEdenItemler = 0;
+                movingItems = 0;
             }
         }
         else if(_inputData.SwipeRight || Input.GetKeyDown(KeyCode.D))
@@ -93,18 +94,20 @@ public class ItemManager : Singleton<ItemManager>
             {
                 level.lastMoveData.items[i] = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items[i];
             }
+            level.prevScore = level.score;
             for (int i = 0; i < GridManager.Instance.right.Count; i++)
             {
+                    
                 if(GridManager.Instance.right[i].item != null)
                 {
                     GridManager.Instance.right[i].item.FindTarget(Direction.RIGHT);
                 }
             }
            
-            if(hareketEdenItemler>0)
+            if(movingItems>0)
             {
                 StartCoroutine(WaitAnimation());
-                hareketEdenItemler = 0;
+                movingItems = 0;
             }
         }
     }
@@ -129,10 +132,9 @@ public class ItemManager : Singleton<ItemManager>
         inAnimation = true;
         yield return new WaitForSeconds(duration*6);
         inAnimation = false;
-
         CreateItem(GetRandomGrid(),0,initialValues [Random.Range(0,initialValues.Length)]);
         onMovementFinished?.Invoke();
-        hareketEdenItemler = 0;
+        movingItems = 0;
         level.SaveLevel(level);
         level.CheckFinish();        
     }
@@ -167,11 +169,11 @@ public class ItemManager : Singleton<ItemManager>
         int value = item1.value;
         DestroyItem(item1);
         DestroyItem(grid2.item);
-
+        
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
         level.score = level.score + newItem.value;
         newItem.newItem = true;
-        ItemManager.Instance.hareketEdenItemler ++;
+        ItemManager.Instance.movingItems ++;
         
         return newItem;
     }

@@ -9,14 +9,11 @@ public enum Direction
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private InputData _data;
-    //swipe
     Vector2 startPos, endPos,currentPos;
     bool stopTouch = false; 
     [SerializeField] private float swipeRange,resetTime;
     private void Update()
     {
-        
-
         #region  mobileInput
 
         if (Input.touchCount > 0)

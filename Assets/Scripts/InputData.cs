@@ -13,6 +13,12 @@ using UnityEngine;
             IsClick = false;
             SwipeDown = SwipeLeft = SwipeRight = SwipeUp = false;
         }
+        #region  PCInput
+        public bool right,left,up,down;
+        #endregion
+
+        #region  MobileInput
+
         [SerializeField] private Vector2 _touchPos;
         [SerializeField] private bool _isClick;
         [SerializeField] private bool _isEnd;
@@ -28,4 +34,5 @@ using UnityEngine;
         public bool SwipeRight { get => _swipeRight; set { _swipeRight = value; } }
         public bool SwipeUp { get => _swipeUp; set { _swipeUp = value; } }
         public bool SwipeDown { get => _swipeDown; set { _swipeDown = value; } }
+        #endregion
     }

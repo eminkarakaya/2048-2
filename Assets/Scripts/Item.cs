@@ -71,9 +71,10 @@ public class Item : MonoBehaviour
             break;
         }
     }
+
+    
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
-        
         float passed = 0f;
         Vector3 initPosition = current.position; 
         newItem = false;
@@ -100,7 +101,7 @@ public class Item : MonoBehaviour
                     //     yield return null;
                     // }
                     
-                    ItemManager.MergeItem(this,GridManager.GetDirGrid(grid,dir));
+                    ItemManager.Instance.MergeItem(this,GridManager.GetDirGrid(grid,dir));
                 }
                 else
                 {

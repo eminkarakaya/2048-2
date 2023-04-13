@@ -9,13 +9,13 @@ public class ItemManager : Singleton<ItemManager>
     public static OnMovementFinished onMovementFinished;
     [SerializeField] private InputData _inputData;
     [SerializeField] private List<Color> colors;
-    public const int INITIAL_VALUE = 2;
+    public static readonly int [] initialValues = new int []{2,2,2,4};
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
     public float duration;
-    // public bool isMove;
     public int hareketEdenItemler;
     Level level;
+    // public int createdItemValue = 2;
     LevelData lastLevelData;
     private void Start() {
         level = FindObjectOfType<Level>();
@@ -23,8 +23,9 @@ public class ItemManager : Singleton<ItemManager>
     }
     
     private void Update() {
+        // input
         if(inAnimation) return;
-        if(_inputData.SwipeDown)
+        if(_inputData.SwipeDown || Input.GetKeyDown(KeyCode.S))
         {
             
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
@@ -46,7 +47,7 @@ public class ItemManager : Singleton<ItemManager>
             }
             
         }
-        else if(_inputData.SwipeUp)
+        else if(_inputData.SwipeUp || Input.GetKeyDown(KeyCode.W))
         {
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
@@ -66,7 +67,7 @@ public class ItemManager : Singleton<ItemManager>
                 hareketEdenItemler = 0;
             }
         }
-        else if(_inputData.SwipeLeft)
+        else if(_inputData.SwipeLeft || Input.GetKeyDown(KeyCode.A))
         {
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
@@ -86,7 +87,7 @@ public class ItemManager : Singleton<ItemManager>
                 hareketEdenItemler = 0;
             }
         }
-        else if(_inputData.SwipeRight)
+        else if(_inputData.SwipeRight || Input.GetKeyDown(KeyCode.D))
         {
             for (int i = 0; i < SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items.Count; i++)
             {
@@ -107,31 +108,38 @@ public class ItemManager : Singleton<ItemManager>
             }
         }
     }
+
+
+
     public Color GetColor(int value)
     {
         int sum = 0;
         while(value != 2)
         {
-            value = value/INITIAL_VALUE;
+            value = value/initialValues[0];
             sum ++;
         }
         return colors[sum];
     }
+
+
+
     IEnumerator WaitAnimation()
     {
         inAnimation = true;
-        Debug.Log("wait");
         yield return new WaitForSeconds(duration*6);
         inAnimation = false;
 
-        
-        CreateItem(GetRandomGrid(),0,2);
+        CreateItem(GetRandomGrid(),0,initialValues [Random.Range(0,initialValues.Length)]);
         onMovementFinished?.Invoke();
         hareketEdenItemler = 0;
         level.SaveLevel(level);
-        
-        // level.lastMoveData.items = SaveSystem.Instance.gameData.datas[SceneManager.GetActiveScene().buildIndex-1].items;
+        level.CheckFinish();        
     }
+
+
+
+
     public Grid GetRandomGrid()
     {
         List<Grid> grids = GridManager.Instance.allGrids.Select(x=>x).ToList();
@@ -151,16 +159,24 @@ public class ItemManager : Singleton<ItemManager>
         return grids[random];
     }
     
-    public static Item MergeItem(Item item1,Grid grid2)
+
+
+
+    public Item MergeItem(Item item1,Grid grid2)
     {
         int value = item1.value;
         DestroyItem(item1);
         DestroyItem(grid2.item);
+
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
+        level.score = level.score + newItem.value;
         newItem.newItem = true;
         ItemManager.Instance.hareketEdenItemler ++;
+        
         return newItem;
     }
+
+    
    
     public static Item DestroyItem(Item item)
     {
@@ -168,18 +184,20 @@ public class ItemManager : Singleton<ItemManager>
         item.grid.item = null;
         item.grid.isFull = false;
         ObjectPool.Instance.SetPooledObject(item.itemType,item);
-        item.value = INITIAL_VALUE;
+        item.value = initialValues[0];
         return item;
     }
+
+
     
     public static Item CreateItem(Grid grid,int objType,int value)
     {
         Item item = ObjectPool.Instance.GetPooledObject(objType);
-
+        // ItemManager.Instance.createdItemValue*=2;
         item.grid = grid;
         grid.item = item;
         grid.isFull = true;
-        
+        item.transform.localScale = grid.transform.localScale;
         item.value = value;
         item.transform.position = grid.transform.position;
         return item;

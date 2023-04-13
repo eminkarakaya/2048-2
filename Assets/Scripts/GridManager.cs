@@ -12,15 +12,15 @@ public class GridManager : Singleton<GridManager>
     [SerializeField] private Grid _gridPrefab;
     public List<Grid> left,right,up,down;
     public List<Grid> allGrids = new List<Grid>();
-    
+
     private void Awake() {
-        CreateGrids();
-        FindSortedGrids();
+        // CreateGrids();
+        // FindSortedGrids();
         foreach (var item in allGrids)
         {
             item.SetNeighbor();
         }
-        
+
     }
     void Start()
     {
@@ -69,24 +69,32 @@ public class GridManager : Singleton<GridManager>
             }
         }
     }
+
+
+    
     private void CreateGrid(Vector2Int index,Vector2 pos)
     {
         var obj = Instantiate(_gridPrefab,pos,Quaternion.identity,_parent);
         obj.index = index;
-        obj.name = "Grid "+index; 
+        obj.name = "Grid "+index;
         allGrids.Add(obj);
     }
+
+
+
     [ContextMenu("CreateGrids")]
     private void CreateGrids()
     {
         for (int y = 0; y < scale.y; y++)
-        {            
+        {
             for (int x = 0; x < scale.x; x++)
             {
                 CreateGrid(new Vector2Int(x,y),new Vector2(_startPos.x + x *.9f,_startPos.y - y*.9f));
             }
         }
     }
+
+
 
     public static Grid GetDirGrid(Grid grid, Direction dir)
     {
@@ -102,5 +110,21 @@ public class GridManager : Singleton<GridManager>
                 return grid.left;
         }
         return null;
+    }
+
+
+    
+    public static List<Grid> GetAllDirectionGrids(Grid grid)
+    {
+        List<Grid> list = new List<Grid>();
+        if(grid.top!= null)
+            list.Add(grid.top);
+        if(grid.bot!= null)
+            list.Add(grid.bot);
+        if(grid.left!= null)
+            list.Add(grid.left);
+        if(grid.right!= null)
+            list.Add(grid.right);
+        return list;
     }
 }

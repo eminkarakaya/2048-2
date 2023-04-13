@@ -26,16 +26,11 @@ public class Grid : MonoBehaviour
     public bool roadBlocked;
     public bool isDisabledGrid;
     public bool isFull;
-    public List<Grid> directions;
     public Grid top,bot,right,left;
     void Start()
     {
         position = this.transform.position;
         SetNeighbor();
-        directions.Add(top);
-        directions.Add(bot);
-        directions.Add(right);
-        directions.Add(left);
     }
 
     bool CheckLeft(int i)
@@ -86,8 +81,5 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-        
     }
-
-    
 }

@@ -15,6 +15,10 @@ public class InputManager : MonoBehaviour
     [SerializeField] private float swipeRange,resetTime;
     private void Update()
     {
+        
+
+        #region  mobileInput
+
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -85,6 +89,7 @@ public class InputManager : MonoBehaviour
             _data.IsClick = false;
             _data.DeltaPosition = Vector3.zero;
         }
+        #endregion
     }
 
     public void CloseSwipe()

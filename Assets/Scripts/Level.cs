@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Linq;
 public class Level : MonoBehaviour
 {
-    [SerializeField] private GameObject restartMenu;
+    [SerializeField] private GameObject restartMenu,finishMenu;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI highScoreText;
     public List< int> items;
@@ -21,6 +21,15 @@ public class Level : MonoBehaviour
             scoreText.text = _score.ToString();
         }
     }
+    private int _highScore;
+    public int highScore
+    {
+        get { return _highScore; }
+        set {
+            _highScore = value;
+            highScoreText.text = _highScore.ToString();
+        }
+    }
     private void OnEnable() {
         ItemManager.onMovementFinished += SetTrueBackClaim;
         for (int i = 0; i < GridManager.Instance.allGrids.Count; i++)
@@ -32,10 +41,6 @@ public class Level : MonoBehaviour
     private void OnDisable() {
         
         ItemManager.onMovementFinished -= SetTrueBackClaim;
-    }
-    public void SetTrueBackClaim()
-    {
-        backClaim = true;
     }
     private void Start() {
         List<Grid> allGrids = GridManager.Instance.allGrids.Select(x=>x).ToList();
@@ -54,15 +59,49 @@ public class Level : MonoBehaviour
         {
             Grid grid1 = ItemManager.Instance.GetRandomGrid();
             Grid grid2 = ItemManager.Instance.GetRandomGrid();
-            Item item1 = ItemManager.CreateItem(grid1,0,ItemManager.INITIAL_VALUE); 
-            Item item2 = ItemManager.CreateItem(grid2,0,ItemManager.INITIAL_VALUE);
+            Item item1 = ItemManager.CreateItem(grid1,0,2); 
+            Item item2 = ItemManager.CreateItem(grid2,0,4);
             items[allGrids.IndexOf(grid1)] = item1.value;
             items[allGrids.IndexOf(grid2)] = item2.value;
         }
         backClaim = data.datas[SceneManager.GetActiveScene().buildIndex-1].backClaim;
         SaveLevel(this);
     }
-    
+    // eger dir bossa veya dir value ıle kendı valuesı esıtse 
+    public bool CheckMerge(Grid grid)
+    {
+        List<Grid> gridList = GridManager.GetAllDirectionGrids(grid);
+        if(grid.item == null) return false;
+        for (int i = 0; i < gridList.Count; i++)
+        { 
+            if(gridList[i].item == null) return false;
+            if(gridList[i].item.value != grid.item.value)
+                return true;
+        }
+        return false;
+    }
+    public void CheckFinish()
+    {
+        foreach (var item in GridManager.Instance.allGrids)
+        {
+            if(!CheckMerge(item))
+            {
+                return;
+            }
+        }
+        finishMenu.SetActive(true);
+    }
+    public void NewGame()
+    {
+        if(score>highScore)
+        {
+            highScore = score;
+        }
+    }
+    public void SetTrueBackClaim()
+    {
+        backClaim = true;
+    }
     public void ReturnMainMenu()
     {
         SaveLevel(this);  

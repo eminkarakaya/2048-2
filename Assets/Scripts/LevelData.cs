@@ -12,7 +12,7 @@ public class LevelData
     public bool backClaim = false;
     public LevelData()
     {
-        
+        //
     }
     public LevelData(Level level)
     {

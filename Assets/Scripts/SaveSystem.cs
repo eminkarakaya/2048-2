@@ -7,16 +7,13 @@ public class SaveSystem : Singleton<SaveSystem>
 {
     [SerializeField] private bool resetData;
     public GameData gameData;
-    private void OnDisable() {
+    private void OnDisable() 
+    {
         SaveGame();
         ResetData();
     }
-    public void SaveGame()
+    private void Awake() 
     {
-        string data = JsonUtility.ToJson(gameData);
-        PlayerPrefs.SetString("Data",data);
-    }
-    private void Awake() {
         LoadGame();
         SaveSystem[] objs = FindObjectsOfType<SaveSystem>();
 
@@ -52,10 +49,10 @@ public class SaveSystem : Singleton<SaveSystem>
             SaveGame();
         }
     }
-    private void Update() {
-        if(Input.GetKeyDown(KeyCode.A))
-            Debug.Log(PlayerPrefs.GetString("Data"));
-        
+    public void SaveGame()
+    {
+        string data = JsonUtility.ToJson(gameData);
+        PlayerPrefs.SetString("Data",data);
     }
     public GameData LoadGame()
     {

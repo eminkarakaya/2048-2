@@ -12,7 +12,8 @@ public class ItemManager : Singleton<ItemManager>
     public static readonly int [] initialValues = new int []{2,2,2,4};
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
-    public float duration;
+    [HideInInspector] public float duration = .01f;
+
     public int movingItems;
     Level level;
     LevelData lastLevelData;
@@ -41,8 +42,8 @@ public class ItemManager : Singleton<ItemManager>
            
             if(movingItems > 0)
             {
-                StartCoroutine(WaitAnimation());
-                movingItems = 0;
+                StartCoroutine(WaitMoving());
+
             }
             
         }
@@ -63,8 +64,8 @@ public class ItemManager : Singleton<ItemManager>
             
             if(movingItems>0)
             {
-                StartCoroutine(WaitAnimation());
-                movingItems = 0;
+                StartCoroutine(WaitMoving());
+
             }
         }
         else if(_inputData.SwipeLeft || Input.GetKeyDown(KeyCode.A))
@@ -84,8 +85,8 @@ public class ItemManager : Singleton<ItemManager>
            
             if(movingItems>0)
             {
-                StartCoroutine(WaitAnimation());
-                movingItems = 0;
+                StartCoroutine(WaitMoving());
+
             }
         }
         else if(_inputData.SwipeRight || Input.GetKeyDown(KeyCode.D))
@@ -106,8 +107,8 @@ public class ItemManager : Singleton<ItemManager>
            
             if(movingItems>0)
             {
-                StartCoroutine(WaitAnimation());
-                movingItems = 0;
+                StartCoroutine(WaitMoving());
+
             }
         }
     }
@@ -126,15 +127,19 @@ public class ItemManager : Singleton<ItemManager>
     }
 
 
-
-    IEnumerator WaitAnimation()
+    
+    IEnumerator WaitMoving()
     {
         inAnimation = true;
-        yield return new WaitForSeconds(duration*6);
+        while(movingItems>0)
+        {
+            yield return null;
+        }
+        // yield return new WaitForSeconds(duration*6);
         inAnimation = false;
         CreateItem(GetRandomGrid(),0,initialValues [Random.Range(0,initialValues.Length)]);
         onMovementFinished?.Invoke();
-        movingItems = 0;
+
         level.SaveLevel(level);
         level.CheckFinish();        
     }
@@ -169,7 +174,7 @@ public class ItemManager : Singleton<ItemManager>
         int value = item1.value;
         DestroyItem(item1);
         DestroyItem(grid2.item);
-        
+        movingItems --;
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
         level.score = level.score + newItem.value;
         newItem.newItem = true;

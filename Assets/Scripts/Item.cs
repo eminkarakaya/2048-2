@@ -31,6 +31,8 @@ public class Item : MonoBehaviour
     private void OnDisable() {
         StopAllCoroutines();
     }
+    
+    
     public void FindTarget(Direction dir)
     {
         if(ItemManager.Instance.inAnimation)
@@ -38,43 +40,54 @@ public class Item : MonoBehaviour
             return;
         }
         temp = this.grid;
-        switch (dir)
+        while(GridManager.GetDirGrid(temp,dir) != null && !GridManager.GetDirGrid(temp,dir).isFull)
         {
-            case Direction.UP:
-                while(temp.top != null && !temp.top.isFull)
-                {
-                    temp = temp.top;
-                }
-                    StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
-
-            break;
-            case Direction.DOWN:
-                while(temp.bot != null && !temp.bot.isFull)
-                {
-                    temp = temp.bot;
-                }
-                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.DOWN));
-                
-            break;
-            case Direction.RIGHT:
-                while(temp.right != null && !temp.right.isFull)
-                {
-                    temp = temp.right;
-                }
-                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
-            break;
-            case Direction.LEFT:
-                
-                while(temp.left != null && !temp.left.isFull)
-                {
-                    temp = temp.left; 
-                }
-                StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
-            break;
+            temp = GridManager.GetDirGrid(temp,dir);
         }
+            StartCoroutine (Move(transform,ItemManager.Instance.duration,dir));
     }
+    // public void FindTarget(Direction dir)
+    // {
+    //     if(ItemManager.Instance.inAnimation)
+    //     {
+    //         return;
+    //     }
+    //     temp = this.grid;
+    //     switch (dir)
+    //     {
+    //         case Direction.UP:
+    //             while(temp.top != null && !temp.top.isFull)
+    //             {
+    //                 temp = temp.top;
+    //             }
+    //                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
 
-
+    //         break;
+    //         case Direction.DOWN:
+    //             while(temp.bot != null && !temp.bot.isFull)
+    //             {
+    //                 temp = temp.bot;
+    //             }
+    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.DOWN));
+                
+    //         break;
+    //         case Direction.RIGHT:
+    //             while(temp.right != null && !temp.right.isFull)
+    //             {
+    //                 temp = temp.right;
+    //             }
+    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
+    //         break;
+    //         case Direction.LEFT:
+                
+    //             while(temp.left != null && !temp.left.isFull)
+    //             {
+    //                 temp = temp.left; 
+    //             }
+    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
+    //         break;
+    //     }
+    // }
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
         float passed = 0f;
@@ -119,6 +132,7 @@ public class Item : MonoBehaviour
                 passed = 0f;
                 initPosition = current.position;
                 action?.Invoke();
+                ItemManager.Instance.movingItems --;
             }
         }
     }   

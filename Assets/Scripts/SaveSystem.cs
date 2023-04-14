@@ -28,7 +28,7 @@ public class SaveSystem : Singleton<SaveSystem>
         }
         if(gameData.datas.Count == 0)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 LevelData data = new LevelData();
                 gameData.datas.Add(data);
@@ -37,7 +37,7 @@ public class SaveSystem : Singleton<SaveSystem>
                     data.items.Add(0);
                 }
             }
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 LevelData data = new LevelData();
                 gameData.lastMoveDatas.Add(data);
@@ -59,6 +59,7 @@ public class SaveSystem : Singleton<SaveSystem>
         gameData = JsonUtility.FromJson<GameData>(PlayerPrefs.GetString("Data"));
         return gameData;
     }
+    [ContextMenu("Reset")]
     public void ResetData()
     {
         if(resetData) PlayerPrefs.SetString("Data",null);

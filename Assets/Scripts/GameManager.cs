@@ -52,5 +52,4 @@ public class GameManager : Singleton<GameManager>
         color3.a = 1;
         levelIcons[selectedLevel-1].GetComponentInChildren<TextMeshProUGUI>().color = color3;
     }
-    
 }

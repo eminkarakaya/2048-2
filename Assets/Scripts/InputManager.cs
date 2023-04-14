@@ -15,7 +15,7 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
         #region  mobileInput
-
+        CloseSwipe();   
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);

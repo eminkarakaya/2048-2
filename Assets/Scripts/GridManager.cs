@@ -14,8 +14,6 @@ public class GridManager : Singleton<GridManager>
     public List<Grid> allGrids = new List<Grid>();
 
     private void Awake() {
-        // CreateGrids();
-        // FindSortedGrids();
         foreach (var item in allGrids)
         {
             item.SetNeighbor();

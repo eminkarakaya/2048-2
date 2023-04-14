@@ -36,7 +36,6 @@ public class ObjectPool : Singleton<ObjectPool>
         obj.itemType = objectType;
         obj.gameObject.SetActive(true);
 
-        // pools[objectType].pooledObjects.Enqueue(obj);
         return obj;
     }
     public void SetPooledObject(int objectType,Item item)

@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private InputData _data;
     Vector2 startPos, endPos,currentPos;
     bool stopTouch = false; 
-    [SerializeField] private float swipeRange,resetTime;
+    [SerializeField] private float resetTime;
     private void Update()
     {
         #region  mobileInput
@@ -23,10 +23,6 @@ public class InputManager : MonoBehaviour
             _data.IsEnd = false;
             if (touch.phase == TouchPhase.Began)
             {
-                // if (EventSystem.current.IsPointerOverGameObject())
-                // {
-                //     return;
-                // }
                 startPos = touch.position;
                 _data.IsClick = true;
                 
@@ -43,22 +39,22 @@ public class InputManager : MonoBehaviour
                 Vector2 distance = currentPos - startPos;
                 if(!stopTouch)
                 {
-                    if(distance.x < -swipeRange)
+                    if(distance.x < -_data.swipeRange)
                     {
                         _data.SwipeLeft = true;
                         stopTouch = true;
                     }
-                    else if(distance.x > swipeRange)
+                    else if(distance.x > _data.swipeRange)
                     {
                         _data.SwipeRight = true;
                         stopTouch = true;
                     }
-                    else if(distance.y > swipeRange)
+                    else if(distance.y > _data.swipeRange)
                     {
                         _data.SwipeUp = true;
                         stopTouch = true;
                     }
-                    else if(distance.y < -swipeRange)
+                    else if(distance.y < -_data.swipeRange)
                     {
                         _data.SwipeDown = true;
                         stopTouch = true;
@@ -67,10 +63,6 @@ public class InputManager : MonoBehaviour
             }
             else if(touch.phase == TouchPhase.Ended)
             {
-                // if (EventSystem.current.IsPointerOverGameObject())
-                // {
-                //     return;
-                // }
                 _data.IsClick = false;
                 _data.IsEnd = true;   
                 _data.IsMove = false;

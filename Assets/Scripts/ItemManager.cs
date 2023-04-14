@@ -13,8 +13,14 @@ public class ItemManager : Singleton<ItemManager>
     private const int INCREMENT_VALUE = 2;
     public bool inAnimation = false;
     [HideInInspector] public float duration = .01f;
-
-    public int movingItems;
+    [SerializeField] private int _movingItems;
+    public int movingItems{
+        get =>_movingItems;
+        set{
+            _movingItems = value;
+                Debug.Log(_movingItems);
+        }
+    }
     Level level;
     LevelData lastLevelData;
     private void Start() {
@@ -135,7 +141,7 @@ public class ItemManager : Singleton<ItemManager>
         {
             yield return null;
         }
-        // yield return new WaitForSeconds(duration*6);
+        yield return new WaitForSeconds(duration);
         inAnimation = false;
         CreateItem(GetRandomGrid(),0,initialValues [Random.Range(0,initialValues.Length)]);
         onMovementFinished?.Invoke();
@@ -165,8 +171,15 @@ public class ItemManager : Singleton<ItemManager>
         int random =  Random.Range (0,grids.Count);
         return grids[random];
     }
-    
-
+    public void WaitW()
+    {
+        StartCoroutine(WaitW2());
+    }
+    public IEnumerator WaitW2()
+    {
+        yield return new WaitForSeconds(duration);
+        movingItems--;
+    }
 
 
     public Item MergeItem(Item item1,Grid grid2)
@@ -174,11 +187,9 @@ public class ItemManager : Singleton<ItemManager>
         int value = item1.value;
         DestroyItem(item1);
         DestroyItem(grid2.item);
-        movingItems --;
         Item newItem = CreateItem(grid2,0,value*INCREMENT_VALUE);
         level.score = level.score + newItem.value;
         newItem.newItem = true;
-        ItemManager.Instance.movingItems ++;
         
         return newItem;
     }
@@ -200,7 +211,6 @@ public class ItemManager : Singleton<ItemManager>
     public static Item CreateItem(Grid grid,int objType,int value)
     {
         Item item = ObjectPool.Instance.GetPooledObject(objType);
-        // ItemManager.Instance.createdItemValue*=2;
         item.grid = grid;
         grid.item = item;
         grid.isFull = true;

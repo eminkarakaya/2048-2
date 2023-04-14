@@ -1423,7 +1423,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: dd460d71f28dc764eae4076daa35cc05, type: 2}
-  swipeRange: 250
   resetTime: 0.5
 --- !u!4 &322639021
 Transform:
@@ -3163,7 +3162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 24, y: 0}
+  m_AnchoredPosition: {x: 24, y: 59}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &731042000
@@ -5411,7 +5410,7 @@ MonoBehaviour:
   - {r: 0, g: 0.64020157, b: 1, a: 1}
   inAnimation: 0
   duration: 0.1
-  movingItems: 0
+  _movingItems: 0
 --- !u!4 &1380150976
 Transform:
   m_ObjectHideFlags: 0

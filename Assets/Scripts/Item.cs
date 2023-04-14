@@ -29,7 +29,7 @@ public class Item : MonoBehaviour
         temp = this.grid;
     }
     private void OnDisable() {
-        StopAllCoroutines();
+        // StopAllCoroutines();
     }
     
     
@@ -46,54 +46,13 @@ public class Item : MonoBehaviour
         }
             StartCoroutine (Move(transform,ItemManager.Instance.duration,dir));
     }
-    // public void FindTarget(Direction dir)
-    // {
-    //     if(ItemManager.Instance.inAnimation)
-    //     {
-    //         return;
-    //     }
-    //     temp = this.grid;
-    //     switch (dir)
-    //     {
-    //         case Direction.UP:
-    //             while(temp.top != null && !temp.top.isFull)
-    //             {
-    //                 temp = temp.top;
-    //             }
-    //                 StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.UP));
-
-    //         break;
-    //         case Direction.DOWN:
-    //             while(temp.bot != null && !temp.bot.isFull)
-    //             {
-    //                 temp = temp.bot;
-    //             }
-    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.DOWN));
-                
-    //         break;
-    //         case Direction.RIGHT:
-    //             while(temp.right != null && !temp.right.isFull)
-    //             {
-    //                 temp = temp.right;
-    //             }
-    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.RIGHT));
-    //         break;
-    //         case Direction.LEFT:
-                
-    //             while(temp.left != null && !temp.left.isFull)
-    //             {
-    //                 temp = temp.left; 
-    //             }
-    //             StartCoroutine (Move(transform,ItemManager.Instance.duration,Direction.LEFT));
-    //         break;
-    //     }
-    // }
+    
     private IEnumerator Move(Transform current,float duration , Direction dir , System.Action action = null)
     {
         float passed = 0f;
         Vector3 initPosition = current.position; 
         newItem = false;
-        
+        bool isMove = false;
         while(GridManager.GetDirGrid(grid,dir) != null)
         {
             if(GridManager.GetDirGrid(grid,dir).isFull)
@@ -103,7 +62,12 @@ public class Item : MonoBehaviour
                     break;
                 }
                 if(GridManager.GetDirGrid(grid,dir).item.value == value)
-                {
+                {    
+                    if(!isMove)
+                    {
+                        ItemManager.Instance.movingItems++;
+                        ItemManager.Instance.WaitW();
+                    }
                     ItemManager.Instance.MergeItem(this,GridManager.GetDirGrid(grid,dir));
                 }
                 else
@@ -113,6 +77,7 @@ public class Item : MonoBehaviour
             }
             else
             {
+                isMove = true;
                 ItemManager.Instance.movingItems ++;
                 grid.item = null;
                 grid.isFull = false;
@@ -134,6 +99,7 @@ public class Item : MonoBehaviour
                 action?.Invoke();
                 ItemManager.Instance.movingItems --;
             }
+            
         }
     }   
 }

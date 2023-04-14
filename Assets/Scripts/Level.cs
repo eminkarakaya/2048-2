@@ -85,7 +85,6 @@ public class Level : MonoBehaviour
 
     #endregion
 
-    // eger dir bossa veya dir value ıle kendı valuesı esıtse 
     public bool CheckMergeOrMove(Grid grid)
     {
         List<Grid> gridList = GridManager.GetAllDirectionGrids(grid);
@@ -155,6 +154,7 @@ public class Level : MonoBehaviour
     }
     public void BackBtn()
     {
+        if(ItemManager.Instance.movingItems > 0) return;
         if(backClaim)
         {
             backClaim = false;

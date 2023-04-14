@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName ="Input/InputData")]
     public class InputData : ScriptableObject
     {
+        public float swipeRange;
         private void OnDisable() {
             IsClick = false;
             SwipeDown = SwipeLeft = SwipeRight = SwipeUp = false;
